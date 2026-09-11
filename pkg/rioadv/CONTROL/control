@@ -1,0 +1,7 @@
+Package: rioadv
+Version: 1.0.0
+Architecture: x86_64
+Maintainer: wilinz
+Section: net
+Priority: optional
+Description: 只发 RIO(RFC 4191) 的 RA 小守护进程: 不宣告默认路由, 只把指定 IPv6 网段引到本机

@@ -1,0 +1,19 @@
+[package]
+name = "rioadv"
+version = "1.0.0"
+edition = "2021"
+
+[[bin]]
+name = "rioadv"
+path = "src/main.rs"
+
+[dependencies]
+# 原始 ICMPv6 套接字 + 绑定网卡(SO_BINDTODEVICE 需要 all 特性)
+socket2 = { version = "0.6", features = ["all"] }
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"

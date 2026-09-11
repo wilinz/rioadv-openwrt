@@ -1,0 +1,14 @@
+{
+	"luci-app-rioadv": {
+		"description": "Grant access to rioadv",
+		"read": {
+			"ubus": {
+				"service": [ "list" ]
+			},
+			"uci": [ "rioadv", "dhcp" ]
+		},
+		"write": {
+			"uci": [ "rioadv" ]
+		}
+	}
+}

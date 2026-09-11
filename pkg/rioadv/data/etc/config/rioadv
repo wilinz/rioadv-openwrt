@@ -1,0 +1,10 @@
+config rioadv 'main'
+	# 默认关闭, 填好路由后再打开
+	option enabled '0'
+	option interface 'br-lan'
+	# M/O 标志从 dhcp.<dhcp_section>.ra_flags 读
+	option dhcp_section 'lan'
+	option lifetime '1800'
+	option interval '60'
+	# 例: 桂电 IPv6 网段, 配合网关 NAT66 访问 CAS
+	list route '2001:250:3402::/48'

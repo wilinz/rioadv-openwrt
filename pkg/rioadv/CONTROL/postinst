@@ -1,0 +1,7 @@
+#!/bin/sh
+[ -n "$IPKG_INSTROOT" ] || {
+	/etc/init.d/rioadv enable
+	# enabled=0 时 start 只注册触发器, 不真正拉起
+	/etc/init.d/rioadv start 2>/dev/null
+}
+exit 0

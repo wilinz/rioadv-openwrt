@@ -1,0 +1,8 @@
+Package: luci-app-rioadv
+Version: 1.0.0
+Architecture: all
+Maintainer: wilinz
+Section: luci
+Priority: optional
+Depends: luci-base, rioadv, rpcd
+Description: LuCI 界面 - RIO 路由通告(只宣告指定 IPv6 网段, 不宣告默认路由)

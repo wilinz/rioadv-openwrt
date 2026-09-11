@@ -1,0 +1,51 @@
+#!/bin/sh /etc/rc.common
+
+USE_PROCD=1
+START=96
+STOP=09
+
+PROG=/usr/sbin/rioadv
+
+add_route() {
+	ARGS="$ARGS -r $1"
+}
+
+# 从 UCI 拼参数; M/O 标志跟随 dhcp.<section>.ra_flags,
+# 与 odhcpd 发的 RA 保持一致, 免得主机在两种标志间来回切
+build_args() {
+	local iface lifetime interval dhcp flags
+	config_load rioadv
+	config_get iface main interface 'br-lan'
+	config_get lifetime main lifetime '1800'
+	config_get interval main interval '60'
+	config_get dhcp main dhcp_section 'lan'
+	ARGS="-i $iface --lifetime $lifetime --interval $interval"
+	config_list_foreach main route add_route
+	flags=" $(uci -q get dhcp.$dhcp.ra_flags) "
+	case "$flags" in *" managed-config "*) ARGS="$ARGS --managed" ;; esac
+	case "$flags" in *" other-config "*) ARGS="$ARGS --other" ;; esac
+}
+
+start_service() {
+	local enabled
+	config_load rioadv
+	config_get_bool enabled main enabled 0
+	[ "$enabled" = "1" ] || return 0
+
+	build_args
+	procd_open_instance
+	procd_set_param command $PROG $ARGS
+	procd_set_param respawn 3600 5 0
+	procd_set_param stderr 1
+	procd_close_instance
+}
+
+# 停止时补发一次 lifetime=0, 让主机立刻撤掉路由, 而不是等它自然过期
+stop_service() {
+	build_args
+	$PROG $ARGS --once --lifetime 0 >/dev/null 2>&1
+}
+
+service_triggers() {
+	procd_add_reload_trigger "rioadv" "dhcp"
+}
